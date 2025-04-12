@@ -1,3 +1,4 @@
+// pages/home/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/home_provider.dart';
@@ -44,15 +45,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    if (_textController.text.isNotEmpty) {
-                      homeProvider.addTest(_textController.text);
-                      _textController.clear(); // Limpa o campo de texto
-                    }
-                  },
-                  icon: const Icon(Icons.add),
-                ),
               ],
             ),
           ),
@@ -62,11 +54,15 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final test = homeProvider.tests[index];
                 return ListTile(
-                  title: Text(test.url), // Exibe o campo relevante do modelo
+                  title: Text(test.id.toString()),
+                  subtitle: Text(test.toString()),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      homeProvider.removeTest(index);
+                    onPressed: () async {
+                      await homeProvider.removeTest(
+                        context: context,
+                        index: index,
+                      );
                     },
                   ),
                 );
@@ -74,6 +70,15 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: ElevatedButton(
+        onPressed: () {
+          if (_textController.text.isNotEmpty) {
+            homeProvider.addTest(_textController.text);
+            _textController.clear();
+          }
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

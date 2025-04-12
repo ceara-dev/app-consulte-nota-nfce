@@ -1,8 +1,11 @@
+// providers/home_provider.dart
 import 'package:flutter/material.dart';
 import '../models/nota_model.dart';
 import '../repository/nota_repository.dart';
 import '../database/database.dart';
-import '../services/helps/console_log.dart';
+import '../services/helpers/console_log.dart';
+import '../services/helpers/data_time_helper.dart';
+import '../wigets/scaffold_messenger.dart';
 
 class HomeProvider with ChangeNotifier {
   final DatabaseApp databaseApp;
@@ -16,8 +19,6 @@ class HomeProvider with ChangeNotifier {
 
   Future<void> loadTests() async {
     try {
-      final databaseApp = DatabaseApp();
-      await databaseApp.init();
       _tests = await notaRepository.getAllNotas();
       notifyListeners();
     } catch (e, stackTrace) {
@@ -40,8 +41,8 @@ class HomeProvider with ChangeNotifier {
         codigo: '',
         uf: '',
         disponivel: '',
-        dataLeitura: '',
-        horaLeitura: '',
+        dataLeitura: DateTimeHelper.getCurrentDate(),
+        horaLeitura: DateTimeHelper.getCurrentTime(),
       );
 
       await notaRepository.addNota(newNota);
@@ -57,12 +58,16 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  Future<void> removeTest(int index) async {
+  Future<void> removeTest({required BuildContext context, required int index}) async {
     try {
       final notaToRemove = _tests[index];
       await notaRepository.deleteNota(notaToRemove.id);
       _tests.removeAt(index);
       notifyListeners();
+     ScaffoldMessengerHelper.showSuccess(
+        context,
+        'Deletado com sucesso.',
+      );
     } catch (e, stackTrace) {
       ConsoleLog.logError(
         error: e,

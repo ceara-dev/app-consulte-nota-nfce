@@ -1,28 +1,45 @@
+// database/database.dart
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 class DatabaseApp {
+  static final DatabaseApp _instance = DatabaseApp._internal();
   late final Database _db;
+  bool _isInitialized = false;
 
-  /// Inicializa o banco de dados e cria as tabelas necessárias.
+  DatabaseApp._internal();
+
+  factory DatabaseApp() {
+    return _instance;
+  }
+
   Future<void> init() async {
-    try {
-      _db = sqlite3.open('app_database.db');
+    if (_isInitialized) {
+      debugPrint('[✓] Banco de dados já foi inicializado.');
+      return;
+    }
 
-      // Cria as tabelas no banco de dados
-      await tables();
+    try {
+      final appDocumentsDir = await getApplicationDocumentsDirectory();
+      final dbPath = '${appDocumentsDir.path}/app.db';
+      debugPrint('dbPath: $dbPath');
+
+      _db = sqlite3.open(dbPath);
+      _isInitialized = true;
+      debugPrint('[✓] Banco de dados aberto com sucesso em: $dbPath');
+
+      await _createTables();
     } catch (e) {
-      debugPrint("database-app-init: $e");
-      rethrow; // Relança o erro para ser tratado em outro lugar, se necessário
+      _handleError("[Erro] Falha ao inicializar o banco de dados", e);
     }
   }
 
-  /// Cria a tabela `notas_nfce` se ela ainda não existir.
-  Future<void> tables() async {
+  Future<void> _createTables() async {
     try {
-      _db.execute('''
+      final String createTableCommand = '''
         CREATE TABLE IF NOT EXISTS notas_nfce (
-          id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
           url TEXT NOT NULL,
           codigo TEXT NOT NULL,
           uf TEXT NOT NULL,
@@ -30,21 +47,27 @@ class DatabaseApp {
           data_leitura_mobile TEXT NOT NULL,
           hora_leitura_mobile TEXT NOT NULL
         );
-      ''');
-      debugPrint(
-          '[x] - Tabela "notas_nfce" criada ou já existe.'.toUpperCase());
+      ''';
+
+      _db.execute(createTableCommand);
+      debugPrint('[✓] Tabelas criadas (ou já existentes).');
     } catch (e) {
-      debugPrint("Erro ao criar tabela: $e");
-      rethrow; // Relança o erro para ser tratado em outro lugar, se necessário
+      _handleError("[Erro] Falha ao criar tabelas", e);
     }
   }
 
-  /// Fecha a conexão com o banco de dados.
   void close() {
-    _db.dispose();
-    debugPrint('Banco de dados fechado.');
+    try {
+      _db.dispose();
+      debugPrint('[✓] Banco de dados fechado.');
+    } catch (e) {
+      _handleError("[Erro] Falha ao fechar o banco de dados", e);
+    }
   }
 
-  /// Obtém a instância do banco de dados.
   Database get db => _db;
+
+  void _handleError(String message, Object error) {
+    debugPrint('$message: $error');
+  }
 }
