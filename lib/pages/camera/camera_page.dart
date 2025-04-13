@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
-import 'package:teste/providers/camera_provider.dart';
+
+import '../../providers/camera_provider.dart';
 
 class CameraPage extends StatelessWidget {
   const CameraPage({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class CameraPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('CAMERA - QRCODE'),
         centerTitle: true,
+        backgroundColor: Colors.teal,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -171,7 +173,7 @@ class _CameraPageContentState extends State<_CameraPageContent> {
           actions: [
             TextButton(
               onPressed: () {
-                 Navigator.pushReplacementNamed(context, '/camera');
+                Navigator.pushReplacementNamed(context, '/camera');
                 cameraProvider.resetState();
               },
               child: const Text('Fechar'),
