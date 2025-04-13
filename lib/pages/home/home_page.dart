@@ -24,46 +24,93 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gerenciamento de Testes'),
+        title: const Text('Notas'),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nome do teste',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: ListView.builder(
-              itemCount: homeProvider.tests.length,
+              itemCount: homeProvider.notas.length,
               itemBuilder: (context, index) {
-                final test = homeProvider.tests[index];
-                return ListTile(
-                  title: Text(test.id.toString()),
-                  subtitle: Text(test.toString()),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                      await homeProvider.removeTest(
-                        context: context,
-                        index: index,
-                      );
-                    },
+                final nota = homeProvider.notas[index];
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                Text('#'),
+                                SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(
+                                  nota.id.toString(),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_month,
+                                  size: 16.0,
+                                ),
+                                SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(nota.dataBr),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('código:'),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text(nota.codigo),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('url:'),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text(nota.url),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('status'),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('NFC-e'),
+                          ],
+                        ),
+                        // ListTile(
+                        //   title: Text(test.id.toString()),
+                        //   subtitle: Text(test.toString()),
+                        //   trailing: IconButton(
+                        //     icon: const Icon(Icons.delete),
+                        //     onPressed: () async {
+                        //       await homeProvider.removeTest(
+                        //         context: context,
+                        //         index: index,
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -73,10 +120,11 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          if (_textController.text.isNotEmpty) {
-            homeProvider.addTest(_textController.text);
-            _textController.clear();
-          }
+          // if (_textController.text.isNotEmpty) {
+          //   homeProvider.addTest(_textController.text);
+          //   _textController.clear();
+          // }
+          Navigator.pushReplacementNamed(context, '/camera');
         },
         child: Icon(Icons.add),
       ),

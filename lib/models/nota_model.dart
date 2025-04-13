@@ -1,4 +1,7 @@
+// models/nota_model.dart
 import 'dart:convert';
+
+import 'package:intl/intl.dart';
 
 class NotaModel {
   int id;
@@ -22,6 +25,15 @@ class NotaModel {
   @override
   String toString() {
     return 'NotaModel(id: $id, url: $url, codigo: $codigo, uf: $uf, disponivel: $disponivel, dataLeitura: $dataLeitura, horaLeitura: $horaLeitura)';
+  }
+
+  String get dataBr {
+    try {
+      final data = DateTime.parse(dataLeitura);
+      return DateFormat('dd/MM/yyyy').format(data);
+    } catch (e) {
+      return dataLeitura;
+    }
   }
 
   NotaModel copyWith({
