@@ -8,11 +8,11 @@ plugins {
 android {
     namespace = 'com.example.app_nfce'
     compileSdkVersion = 35
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "27.0.12077973"
     // ndkVersion flutter.ndkVersion
     defaultConfig {
         applicationId = 'com.example.app_nfce'
-        minSdkVersion = 21
+        minSdkVersion = flutter.minSdkVersion
         targetSdkVersion = 35
         versionCode 1
         versionName "0.0.1"
