@@ -1,12 +1,14 @@
 // wigets/scaffold_messenger.dart
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class ScaffoldMessengerHelper {
   static void showSuccess(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.success,
       ),
     );
   }
@@ -15,7 +17,7 @@ class ScaffoldMessengerHelper {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.error,
       ),
     );
   }
@@ -24,7 +26,7 @@ class ScaffoldMessengerHelper {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.primary,
       ),
     );
   }

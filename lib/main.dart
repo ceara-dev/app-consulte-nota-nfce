@@ -6,6 +6,7 @@ import 'providers/home_provider.dart';
 import 'providers/camera_provider.dart';
 import 'database/database.dart';
 import 'routes/routes.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,9 +33,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Gerenciamento de Testes',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login', 
+      title: 'Nota Clara',
+      theme: AppTheme.light,
+      initialRoute: '/login',
       routes: Routes.routes,
     );
   }

@@ -51,9 +51,32 @@ class DatabaseApp {
 
       _db.execute(createTableCommand);
       debugPrint('[✓] Tabelas criadas (ou já existentes).');
+
+      await _migrate();
     } catch (e) {
       _handleError("[Erro] Falha ao criar tabelas", e);
     }
+  }
+
+  Future<void> _migrate() async {
+    final colunas = _db
+        .select('PRAGMA table_info(notas_nfce)')
+        .map((row) => row['name'] as String)
+        .toSet();
+
+    if (!colunas.contains('emitente')) {
+      _db.execute(
+        "ALTER TABLE notas_nfce ADD COLUMN emitente TEXT NOT NULL DEFAULT ''",
+      );
+    }
+
+    if (!colunas.contains('valor_total')) {
+      _db.execute(
+        'ALTER TABLE notas_nfce ADD COLUMN valor_total REAL NOT NULL DEFAULT 0',
+      );
+    }
+
+    debugPrint('[✓] Migrações aplicadas.');
   }
 
   void close() {

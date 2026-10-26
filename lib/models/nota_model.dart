@@ -3,12 +3,16 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 
+import '../services/helpers/nfce_qr_parser.dart';
+
 class NotaModel {
   int id;
   String url;
   String codigo;
   String uf;
   String disponivel;
+  String emitente;
+  double valorTotal;
   String dataLeitura;
   String horaLeitura;
 
@@ -18,13 +22,15 @@ class NotaModel {
     required this.codigo,
     required this.uf,
     required this.disponivel,
+    this.emitente = '',
+    this.valorTotal = 0,
     required this.dataLeitura,
     required this.horaLeitura,
   });
 
   @override
   String toString() {
-    return 'NotaModel(id: $id, url: $url, codigo: $codigo, uf: $uf, disponivel: $disponivel, dataLeitura: $dataLeitura, horaLeitura: $horaLeitura)';
+    return 'NotaModel(id: $id, url: $url, codigo: $codigo, uf: $uf, disponivel: $disponivel, emitente: $emitente, valorTotal: $valorTotal, dataLeitura: $dataLeitura, horaLeitura: $horaLeitura)';
   }
 
   String get dataBr {
@@ -36,12 +42,16 @@ class NotaModel {
     }
   }
 
+  NfceQrInfo get qrInfo => NfceQrInfo.parse(codigo);
+
   NotaModel copyWith({
     int? id,
     String? url,
     String? codigo,
     String? uf,
     String? disponivel,
+    String? emitente,
+    double? valorTotal,
     String? dataLeitura,
     String? horaLeitura,
   }) {
@@ -51,6 +61,8 @@ class NotaModel {
       codigo: codigo ?? this.codigo,
       uf: uf ?? this.uf,
       disponivel: disponivel ?? this.disponivel,
+      emitente: emitente ?? this.emitente,
+      valorTotal: valorTotal ?? this.valorTotal,
       dataLeitura: dataLeitura ?? this.dataLeitura,
       horaLeitura: horaLeitura ?? this.horaLeitura,
     );
@@ -63,6 +75,8 @@ class NotaModel {
       'codigo': codigo,
       'uf': uf,
       'disponivel': disponivel,
+      'emitente': emitente,
+      'valorTotal': valorTotal,
       'dataLeitura': dataLeitura,
       'horaLeitura': horaLeitura,
     };
@@ -75,6 +89,8 @@ class NotaModel {
       codigo: map['codigo'] as String,
       uf: map['uf'] as String,
       disponivel: map['disponivel'] as String,
+      emitente: map['emitente'] as String? ?? '',
+      valorTotal: (map['valorTotal'] as num?)?.toDouble() ?? 0,
       dataLeitura: map['dataLeitura'] as String,
       horaLeitura: map['horaLeitura'] as String,
     );
@@ -94,6 +110,8 @@ class NotaModel {
         other.codigo == codigo &&
         other.uf == uf &&
         other.disponivel == disponivel &&
+        other.emitente == emitente &&
+        other.valorTotal == valorTotal &&
         other.dataLeitura == dataLeitura &&
         other.horaLeitura == horaLeitura;
   }
@@ -105,6 +123,8 @@ class NotaModel {
         codigo.hashCode ^
         uf.hashCode ^
         disponivel.hashCode ^
+        emitente.hashCode ^
+        valorTotal.hashCode ^
         dataLeitura.hashCode ^
         horaLeitura.hashCode;
   }

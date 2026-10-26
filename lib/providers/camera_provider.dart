@@ -4,18 +4,16 @@ import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database/database.dart';
+import '../models/nota_detalhes.dart';
 import '../models/nota_model.dart';
 import '../repository/nota_repository.dart';
 import '../services/helpers/console_log.dart';
 import '../services/helpers/data_time_helper.dart';
+import '../services/helpers/nfce_qr_parser.dart';
 
 class CameraProvider with ChangeNotifier {
   final DatabaseApp databaseApp;
   final notaRepository = NotaRepository();
-
-  List<NotaModel> _tests = [];
-
-  List<NotaModel> get tests => _tests;
 
   CameraProvider(this.databaseApp);
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -53,16 +51,18 @@ class CameraProvider with ChangeNotifier {
       if (!_dialogShown) {
         _dialogShown = true;
         _result = scanData;
-
+        controller.pauseCamera();
         notifyListeners();
       }
     });
   }
 
-  void resetState() {
+  Future<void> resetState() async {
     _dialogShown = false;
     _result = null;
     notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 600));
+    await _controller?.resumeCamera();
   }
 
   void pauseCamera() {
@@ -86,7 +86,6 @@ class CameraProvider with ChangeNotifier {
   }
 
   void disposeController() {
-    _controller?.dispose();
     _controller = null;
     notifyListeners();
   }
@@ -101,29 +100,31 @@ class CameraProvider with ChangeNotifier {
     }
   }
 
-   Future<void> addQrcode({required String codigo, required  String url}) async {
+  Future<void> addQrcode(
+    NfceQrInfo info, {
+    NotaDetalhes? detalhes,
+  }) async {
     try {
-      final databaseApp = DatabaseApp();
-      await databaseApp.init();
       final newNota = NotaModel(
-        id: _tests.length + 1,
-        url: url,
-        codigo: codigo,
-        uf: '',
-        disponivel: '',
+        id: 0,
+        url: info.url ?? info.rawContent,
+        codigo: info.chave ?? info.rawContent,
+        uf: info.uf ?? '',
+        disponivel: info.ambiente ?? '',
+        emitente: detalhes?.emitente ?? '',
+        valorTotal: detalhes?.valorPagar ?? detalhes?.valorTotal ?? 0,
         dataLeitura: DateTimeHelper.getCurrentDate(),
         horaLeitura: DateTimeHelper.getCurrentTime(),
       );
 
       await notaRepository.addNota(newNota);
-      _tests.add(newNota);
       notifyListeners();
     } catch (e, stackTrace) {
       ConsoleLog.logError(
         error: e,
         stackTrace: stackTrace,
         className: runtimeType.toString(),
-        methodName: 'addTest',
+        methodName: 'addQrcode',
       );
     }
   }

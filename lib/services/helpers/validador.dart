@@ -9,7 +9,7 @@ class Validador {
     }
     return null;
   }
- 
+
   static String? validarSenha(String? value) {
     if (value == null || value.isEmpty) {
       return "O campo senha é obrigatório.";

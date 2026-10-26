@@ -58,13 +58,14 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  Future<void> removeTest({required BuildContext context, required int index}) async {
+  Future<void> removeTest(
+      {required BuildContext context, required int index}) async {
     try {
       final notaToRemove = _notas[index];
       await notaRepository.deleteNota(notaToRemove.id);
       _notas.removeAt(index);
       notifyListeners();
-     ScaffoldMessengerHelper.showSuccess(
+      ScaffoldMessengerHelper.showSuccess(
         context,
         'Deletado com sucesso.',
       );

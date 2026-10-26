@@ -20,6 +20,8 @@ class NotaDbController {
           'codigo': row['codigo'],
           'uf': row['uf'],
           'disponivel': row['disponivel'],
+          'emitente': row['emitente'],
+          'valorTotal': row['valor_total'],
           'dataLeitura': row['data_leitura_mobile'],
           'horaLeitura': row['hora_leitura_mobile'],
         });
@@ -40,14 +42,16 @@ class NotaDbController {
     try {
       await databaseApp.init();
       final stmt = databaseApp.db.prepare('''
-      INSERT INTO notas_nfce (url, codigo, uf, disponivel, data_leitura_mobile, hora_leitura_mobile)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO notas_nfce (url, codigo, uf, disponivel, emitente, valor_total, data_leitura_mobile, hora_leitura_mobile)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''');
       stmt.execute([
         nota.url,
         nota.codigo,
         nota.uf,
         nota.disponivel,
+        nota.emitente,
+        nota.valorTotal,
         nota.dataLeitura,
         nota.horaLeitura,
       ]);
